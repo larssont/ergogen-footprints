@@ -3,7 +3,6 @@
 module.exports = {
     params: {
         side: 'F',
-        vias: true,
         swap_nets: false,
         pad_width: 0.85,
         pad_height: 1.25,
