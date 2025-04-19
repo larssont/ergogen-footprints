@@ -2,59 +2,82 @@
 // See https://services.taiwansemi.com/storage/resources/datasheet/BAW56%20SERIES_I2001.pdf
 module.exports = {
     params: {
-        side: 'F',
-        swap_nets: false,
+        side: "F",
+        reversible: false,
+        silkscreen: true,
         pad_width: 0.85,
         pad_height: 1.25,
-        A1: { type: 'net', value: undefined },
-        A2: { type: 'net', value: undefined },
-        C: { type: 'net', value: undefined },
+        swap_nets: false,
+        A1: { type: "net", value: undefined },
+        A2: { type: "net", value: undefined },
+        C: { type: "net", value: undefined },
     },
 
-    body: p => {
-        const justify = p.side == "B" ? "(justify mirror)" : ""
+    body: (p) => {
+        const justify = p.side == "B" ? "(justify mirror)" : "";
+
         if (p.swap_nets) {
             [p.A1, p.A2] = [p.A2, p.A1];
         }
 
-        let padNo = 1
+        let padNo = 1;
         const pad = (x, y, pin) => {
-            return `
-                (pad "${padNo++}" smd roundrect
-                    (at ${x} ${y} ${p.rot})
-                    (size ${p.pad_width} ${p.pad_height})
-                    (layers "${p.side}.Cu" "${p.side}.Paste" "${p.side}.Mask")
-                    (roundrect_rratio 0.1)
-                    ${pin.str}
-                )`
-        }
+            const layers = (side) => ["Cu", "Paste", "Mask"].map((layer) => `\"${side}.${layer}\"`).join(" ");
+
+            const sides = p.reversible ? ["F", "B"] : [p.side];
+
+            return sides
+                .map(
+                    (side) => `
+                    (pad "${padNo++}" smd roundrect
+                        (at ${x} ${y} ${p.rot})
+                        (size ${p.pad_width} ${p.pad_height})
+                        (layers ${layers(side)})
+                        (roundrect_rratio 0.1)
+                        ${pin.str}
+                    )`
+                )
+                .join("\n");
+        };
 
         const lines = (...coords) => {
-            if (coords.length % 2 !== 0 || coords.length < 4) {
-                throw new Error("Input must include at least two points (x1, y1, x2, y2).");
+            if (coords.length < 4 || coords.length % 2) {
+                throw new Error(`Invalid coordinates: expected an even number >= 4, got ${coords.length}`);
             }
-        
-            let result = '';
-        
-            for (let i = 0; i < coords.length - 2; i += 2) {
-                const [x1, y1, x2, y2] = [coords[i], coords[i + 1], coords[i + 2], coords[i + 3]];
-                result += `(fp_line (start ${x1} ${y1}) (end ${x2} ${y2}) (layer "${p.side}.SilkS") (stroke (width 0.12) (type solid)))\n`;
-            }
-        
-            return result.trim();
+
+            // Determine target layers
+            const layers = p.silkscreen ? (p.reversible ? ["F.SilkS", "B.SilkS"] : [`${p.side}.SilkS`]) : ["Dwgs.User"];
+
+            // Format a single line entry
+            const line = ([x1, y1, x2, y2], layer) =>
+                `(fp_line 
+                    (start ${x1} ${y1}) 
+                    (end ${x2} ${y2}) 
+                    (layer "${layer}") 
+                    (stroke (width 0.12) 
+                    (type solid))
+                )`;
+
+            // Build lines by slicing coords into quads and mapping layers
+            return Array.from({ length: (coords.length - 2) / 2 }, (_, i) => coords.slice(i * 2, i * 2 + 4))
+                .flatMap((quad) => layers.map((layer) => line(quad, layer)))
+                .join("\n");
         };
-        
-        const h = 2*p.pad_height + 1.1
-        const w = 2*p.pad_width + 1.1
 
-        const cx = 0
-        const cy = -(h - p.pad_height)/2
+        const h = 2 * p.pad_height + 1.1;
+        const w = 2 * p.pad_width + 1.1;
 
-        const a1x = -(w - p.pad_width)/2
-        const a2x = a1x * -1
-        const ay = cy * -1
+        // Cathode
+        const cx = 0;
+        const cy = -(h - p.pad_height) / 2;
 
-        const q = p.pad_width/2 + 0.25
+        // Anodes
+        const a1x = -(w - p.pad_width) / 2;
+        const a2x = a1x * -1;
+        const ay = cy * -1;
+
+        // Line offset from pad
+        const d = p.pad_width / 2 + 0.25;
 
         return `
             (footprint "BAV70 SOT23" (version 20211014) (generator pcbnew)
@@ -71,14 +94,13 @@ module.exports = {
                     (effects (font (size 1 1) (thickness 0.15)) ${justify})
                 )
 
-                ${lines(cx - q, -0.65, -1.46, -0.65, -1.46, 0.30)}
-                ${lines(cx + q, -0.65,  1.46, -0.65, 1.46, 0.30)}
-                ${lines(a1x + q, 0.65, a2x - q, 0.65)}
+                ${lines(cx - d, -0.65, -1.46, -0.65, -1.46, 0.3)}
+                ${lines(cx + d, -0.65, 1.46, -0.65, 1.46, 0.3)}
+                ${lines(a1x + d, 0.65, a2x - d, 0.65)}
 
                 ${pad(a1x, ay, p.A1)}
                 ${pad(a2x, ay, p.A2)}
                 ${pad(cx, cy, p.C)}
-        )
-        `
-    }
-}
+        )`;
+    },
+};
