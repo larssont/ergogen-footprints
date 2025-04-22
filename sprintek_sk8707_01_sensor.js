@@ -7,6 +7,8 @@ module.exports = {
     TPS3: { type: 'net', value: "TPS_3" },
     TPS4: { type: 'net', value: "TPS_4" },
     hole_size: 7,
+    hole_pads: true,
+    side_pads: true,
     silkscreen: true,
   },
   body: p => {
@@ -23,15 +25,22 @@ module.exports = {
 
 
     // Pads
-    fp.push(`(pad "" smd circle (at ${(flip ? 4.75 : -4.75)} -4.75 ${p.r}) (size 2.5 2.5) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask"))`);
-    fp.push(`(pad "" smd circle (at ${(flip ? 4.75 : -4.75)} 4.75 ${p.r}) (size 2.5 2.5) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask"))`);
-    fp.push(`(pad "" np_thru_hole circle (at 0 0 ${p.r}) (size ${p.hole_size} ${p.hole_size}) (drill ${p.hole_size}) (layers "F&B.Cu" "*.Mask"))`);
-    fp.push(`(pad "" smd circle (at ${(flip ? -4.75 : 4.75)} -4.75 ${p.r}) (size 2.5 2.5) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask"))`);
-    fp.push(`(pad "" smd circle (at ${(flip ? -4.75 : 4.75)} 4.75 ${p.r}) (size 2.5 2.5) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask"))`);
-    fp.push(`(pad "1" smd roundrect (at ${(flip ? 3.75 : -3.75)} 10.84 ${p.r + 90}) (size 2.4 2) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25) (thermal_bridge_angle 45) ${p.TPS4})`);
-    fp.push(`(pad "2" smd roundrect (at ${(flip ? 1.25 : -1.25)} 10.84 ${p.r + 90}) (size 2.4 2) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25) (thermal_bridge_angle 45) ${p.TPS3})`);
-    fp.push(`(pad "3" smd roundrect (at ${(flip ? -1.25 : 1.25)} 10.84 ${p.r + 90}) (size 2.4 2) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25) (thermal_bridge_angle 45) ${p.TPS2})`);
-    fp.push(`(pad "4" smd roundrect (at ${(flip ? -3.75 : 3.75)} 10.84 ${p.r + 90}) (size 2.4 2) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25) (thermal_bridge_angle 45) ${p.TPS1})`);
+    fp.push(`(pad "1" smd roundrect (at ${(flip ? 3.75 : -3.75)} 10.84 ${p.r + 90}) (size 2.4 2) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25) ${p.TPS4})`);
+    fp.push(`(pad "2" smd roundrect (at ${(flip ? 1.25 : -1.25)} 10.84 ${p.r + 90}) (size 2.4 2) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25) ${p.TPS3})`);
+    fp.push(`(pad "3" smd roundrect (at ${(flip ? -1.25 : 1.25)} 10.84 ${p.r + 90}) (size 2.4 2) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25) ${p.TPS2})`);
+    fp.push(`(pad "4" smd roundrect (at ${(flip ? -3.75 : 3.75)} 10.84 ${p.r + 90}) (size 2.4 2) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25) ${p.TPS1})`);
+
+    if (p.hole_pads) {
+      fp.push(`(pad "" smd circle (at ${(flip ? 4.75 : -4.75)} -4.75 ${p.r}) (size 2.5 2.5) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask"))`);
+      fp.push(`(pad "" smd circle (at ${(flip ? 4.75 : -4.75)} 4.75 ${p.r}) (size 2.5 2.5) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask"))`);
+      fp.push(`(pad "" smd circle (at ${(flip ? -4.75 : 4.75)} -4.75 ${p.r}) (size 2.5 2.5) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask"))`);
+      fp.push(`(pad "" smd circle (at ${(flip ? -4.75 : 4.75)} 4.75 ${p.r}) (size 2.5 2.5) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask"))`);
+    }
+
+    if (p.side_pads) {
+      fp.push(`(pad "" smd roundrect (at ${(flip ? -6.6 : 6.6)} ${10.84 - 0.3 - 1.5} ${p.r + 90}) (size 3.4 2.4) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25))`);
+      fp.push(`(pad "" smd roundrect (at ${(flip ? 6.6 : -6.6)} ${10.84 - 0.3 - 1.5} ${p.r + 90}) (size 3.4 2.4) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25))`);
+    }
 
     // Styling
     const displayLayer = p.silkscreen ? (flip ? "F.SilkS" : "B.SilkS") : "Dwgs.User"
@@ -44,6 +53,7 @@ module.exports = {
     fp.push(`(fp_line (start ${(flip ? -6.6 : 6.6)} -7.45) (end ${(flip ? -3.6 : 3.6)} -7.45) (stroke (width 0.1) (type default)) (layer ${displayLayer}))`);
     fp.push(`(fp_line (start ${(flip ? -6.6 : 6.6)} -4.45) (end ${(flip ? -6.6 : 6.6)} -7.45) (stroke (width 0.1) (type default)) (layer ${displayLayer}))`);
     fp.push(`(fp_line (start ${(flip ? -6.6 : 6.6)} 10.84) (end ${(flip ? -6.6 : 6.6)} 7.84) (stroke (width 0.1) (type default)) (layer ${displayLayer}))`);
+
     fp.push(`(fp_text user "Trackpoint" (at 0 7.5 ${p.r + 0}) (unlocked yes) (layer ${displayLayer}) (effects (font (size 1 1) (thickness 0.15)) (justify bottom${ flip ? "" : " mirror"})))`);
     fp.push(`(fp_text user "Sensor" (at 0 9 ${p.r + 0}) (unlocked yes) (layer ${displayLayer}) (effects (font (size 1 1) (thickness 0.15)) (justify bottom${ flip ? "" : " mirror"})))`);
 
