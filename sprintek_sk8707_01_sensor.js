@@ -6,7 +6,7 @@ module.exports = {
     TPS2: { type: 'net', value: "TPS_2" },
     TPS3: { type: 'net', value: "TPS_3" },
     TPS4: { type: 'net', value: "TPS_4" },
-    hole_size: 7,
+    hole_size: 7.5,
     hole_pads: true,
     side_pads: true,
     silkscreen: true,
@@ -23,6 +23,10 @@ module.exports = {
 
     fp.push(`(property "Reference" "${p.ref}" ${p.ref_hide} (at 0 0 ${p.r}) (layer "${p.side}.SilkS") (effects (font (size 1 1) (thickness 0.15))${p.side === "B" ? " (justify mirror)" : ""}))`);
 
+    // Center hole
+    if (p.hole_size > 0) {
+      fp.push(`(pad "" np_thru_hole circle (at 0 0 ${p.r}) (size ${p.hole_size} ${p.hole_size}) (drill ${p.hole_size}) (layers "F&B.Cu" "*.Mask"))`);
+    }
 
     // Pads
     fp.push(`(pad "1" smd roundrect (at ${(flip ? 3.75 : -3.75)} 10.84 ${p.r + 90}) (size 2.4 2) (layers "${(flip ? "F" : "B")}.Cu" "${(flip ? "F" : "B")}.Paste" "${(flip ? "F" : "B")}.Mask") (roundrect_rratio 0.25) ${p.TPS4})`);
