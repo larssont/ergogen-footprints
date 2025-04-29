@@ -1,6 +1,7 @@
 // For Molex 54819-0589
 module.exports = {
     params: {
+        designator: "J",
         side: "F",
         VBUS: { type: "net", value: "VBUS" },
         DMIN: { type: "net", value: "DMIN" },

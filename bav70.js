@@ -2,6 +2,7 @@
 // See https://services.taiwansemi.com/storage/resources/datasheet/BAW56%20SERIES_I2001.pdf
 module.exports = {
     params: {
+        designator: "D",
         side: "F",
         reversible: false,
         silkscreen: true,

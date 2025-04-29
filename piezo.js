@@ -5,6 +5,7 @@
 //    B: corresponds to pin 2
 module.exports = {
     params: {
+      designator: "SPK",
       side: 'F',
       reversible: false,
       A: { type: 'net', value: undefined },
